@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 export default function PodcastCard({ podcast }) {
   return (
     <div className='border rounded-lg p-4 flex'>
