@@ -14,7 +14,7 @@ export default function AddPodcastForm({ onSubmit }) {
         <Input
           placeholder='Podcast Creator'
           name='creator'
-          formRef={register({ required: true })}
+          formRef={register({ required: "Required" })}
         />
         {errors.creator && (
           <FormError errorMessage='Name of Creator is required' />
@@ -24,7 +24,7 @@ export default function AddPodcastForm({ onSubmit }) {
         <Input
           placeholder='Title of Podcast'
           name='title'
-          formRef={register({ required: true })}
+          formRef={register({ required: 'Required' })}
         />
         {errors.title && <FormError errorMessage='Title is required' />}
       </InputSpacer>
@@ -32,7 +32,7 @@ export default function AddPodcastForm({ onSubmit }) {
         <Input
           placeholder='Art'
           name='art'
-          formRef={register({ required: true })}
+          formRef={register({ required: 'Required' })}
         />
         {errors.art && <FormError errorMessage='Art URL is required' />}
       </InputSpacer>

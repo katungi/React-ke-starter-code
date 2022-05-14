@@ -1,9 +1,29 @@
+import { useState, useEffect } from 'react';
 import Head from 'next/head';
-import Image from 'next/image';
 import AddPodcastForm from '../components/AddPodcastForm';
-import styles from '../styles/Home.module.css';
 
-export default function Home() {
+// let's import Prisma client
+import { PrismaClient } from '@prisma/client';
+import PodcastCard from '../components/Card';
+
+// create an instance of the prisma Client
+const prisma = new PrismaClient();
+
+async function savedPodcast(podcast) {
+  const response = await fetch('/api/podcast', {
+    method: 'POST',
+    body: JSON.stringify(podcast),
+  });
+
+  if (!response.ok) {
+    throw new Error(response.statusText);
+  }
+
+  return await response.json();
+}
+
+export default function Home({ initialPodcasts }) {
+  const [podcasts, setPodcasts] = useState(initialPodcasts);
   return (
     <>
       <Head>
@@ -16,15 +36,39 @@ export default function Home() {
         <section className='w-1/3 bg-green-600 h-screen p-8'>
           <div className='mb-3'>
             <h2 className='text-3xl text-white'>Add a Podcast</h2>
-            <AddPodcastForm />
+            <AddPodcastForm
+              onSubmit={async (data, e) => {
+                try {
+                  await savedPodcast(data);
+                  setPodcasts([...podcasts, data]);
+                  e.target.reset();
+                } catch (err) {
+                  console.log(err);
+                }
+              }}
+            />
           </div>
         </section>
         <section className='w-2/3 h-screen p-8'>
           <div className='mb-3'>
             <h2 className='text-3xl text-green-600'>Podcasts</h2>
           </div>
+          {podcasts.map((c, i) => (
+            <div className='mb-3' key={i}>
+              <PodcastCard podcast={c} />
+            </div>
+          ))}
         </section>
       </div>
     </>
   );
+}
+
+export async function getServerSideProps() {
+  const podcast = await prisma.podcast.findMany();
+  return {
+    props: {
+      initialPodcasts: podcast,
+    },
+  };
 }
